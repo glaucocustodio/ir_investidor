@@ -1,13 +1,13 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.3'
+ruby '2.5.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.1', '>= 5.2.1.1'
 
 # Use mysql as the database for Active Record
-gem 'mysql2', '>= 0.4.4', '< 0.6.0'
+# gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
@@ -37,6 +37,10 @@ gem 'sidekiq'
 gem 'sidekiq-limit_fetch'
 gem 'sidekiq-cron'
 
+gem 'posix-spawn'
+gem 'nokogiri'
+gem 'axlsx'
+gem 'zip'
 # Read Spreadsheets
 gem "roo", "~> 2.7.0"
 gem 'roo-xls'

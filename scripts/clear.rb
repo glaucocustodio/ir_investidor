@@ -40,11 +40,35 @@ MAPA_PAPEIS = {
   'SMILES'          => 'SMLS3',
   'TELEF BRASIL'    => 'VIVT4',
   'VIAVAREJO'       => 'VVAR3',
+  'IOCHP-MAXION'    => 'MYPK3',
+  'TAESA'           => 'TAEE11',
+  'WEG'             => 'WEGE3',
+  'FLEURY'          => 'FLRY3',
+  'ITAUSA'          => 'ITSA4',
+  'TRISUL'          => 'TRIS3',
+  'LOCAMERICA'      => 'LCAM3',
+  'B3'              => 'B3SA3',
+  'ENERGIAS BR'     => 'ENBR3',
+  'SUZANO S.A.'     => 'SUZB3',
+  'KLABIN S/A'      => 'KLBN11',
+  'WIZ S.A.'        => 'WIZS3',
+  'UNIPAR'          => 'UNIP6',
+  'MAGAZ LUIZA'     => 'MGLU3',
+  'IRBBRASIL RE'    => 'IRBR3',
+  'METAL LEVE'      => 'LEVE3',
+  'BRADESCO'        => 'BBDC4',
+  'ENGIE BRASIL'    => 'EGIE3',
+  'TIM PART S/A'    => 'TIMP3',
+  'BBSEGURIDADE'    => 'BBSE3',
+  'JSL'             => 'JSLG3',
+  'PETROBRAS BR'    => 'BRDT3',
+  'ABC BRASIL'      => 'ABCB4'
 }
 
 cmd = "pdftohtml -stdout -xml -i -fontfullname \"#{PDF_PATH}\" 2>&1"
 puts "Running command: #{cmd}"
 xml = POSIX::Spawn::Child.new(cmd).out
+
 File.open('tmp/pdf.xml', 'wb') { |f| f.write xml } if DEBUG
 
 doc = Nokogiri::XML(xml)
@@ -57,11 +81,11 @@ sheet = workbook.add_worksheet(:name => "Operações")
 
 sheet.add_row([
   'DATA OPERACAO',
-  'DATA LIQUIDACAO',
-  'ATIVO',
-  'OPERACAO',
-  'DAYTRADE?',
   'PAPEL',
+  # 'DATA LIQUIDACAO',
+  'TIPO',
+  'OPERACAO',
+  # 'DAYTRADE?',
   'QTD',
   'PRECO',
 ])
@@ -89,7 +113,7 @@ pages.each_with_index do |page, i|
               when / OPCAO /i
                 'OPCAO'
               when / VISTA | FRACION.+RIO /i
-                row.match(/ FII /i) ? 'FII' : 'ACAO'
+                row.match(/ FII /i) ? 'fii' : 'ação'
               else
                 ''
               end
@@ -156,14 +180,14 @@ end
 operacoes.each do |papel, ops|
   ops.each do |op|
     sheet.add_row([
-      op['DATA OPERACAO'],
-      op['DATA LIQUIDACAO'],
-      op['ATIVO'],
-      op['OPERACAO'],
-      op['DAYTRADE?'],
+      Date.parse(op['DATA OPERACAO']).strftime('%d/%m/%y'),
+      # op['DATA LIQUIDACAO'],
       papel,
+      op['ATIVO'],
+      op['OPERACAO'].downcase,
+      # op['DAYTRADE?'],
       op['QTD'],
-      op['PRECO'],
+      op['PRECO'].sub(',', '.'),
     ])
   end
 end
