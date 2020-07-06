@@ -49,7 +49,7 @@ def parse_nota_corretagem(nota_corretagem)
                 else
                   ''
                 end
-        empresa = row[/(VISTA|FRACIONARIO|[0-9]{2}\/[0-9]{2})\s+(.+)\s+(ON|PN|CI|UNT)/i, 2]
+        empresa = row[/(VISTA|FRACIONARIO|[0-9]{2}\/[0-9]{2})\s+(.+)\s+(ON|PN|CI|UNT|DM)/i, 2]
         empresa = empresa.split(/\s/).last.to_s if empresa.to_s.match(/\AFII/i)
         papel   = MAPA_PAPEIS[empresa] || empresa
         com_obs = row[/\s+[0-9,.]+\s+[0-9,.]+\s+[0-9,.]+\s+[0-9,.]+/, 0]
@@ -168,7 +168,13 @@ MAPA_PAPEIS = {
   'PETROBRAS BR'    => 'BRDT3',
   'ABC BRASIL'      => 'ABCB4',
   'SANEPAR'         => 'SAPR4',
-  'JHSF PART'       => 'JHSF3'
+  'JHSF PART'       => 'JHSF3',
+  'SUL AMERICA'     => 'SULA11',
+  'HYPERA'          => 'HYPE3',
+  'PORTO SEGURO'    => 'PSSA3',
+  'GRAZZIOTIN'      => 'CGRA3',
+  'ODONTOPREV'      => 'ODPV3',
+  'M.DIASBRANCO'    => 'MDIA3'
 }
 
 package = Axlsx::Package.new

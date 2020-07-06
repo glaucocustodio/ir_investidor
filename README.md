@@ -43,6 +43,7 @@ executar os scripts.
 |---------------------------|-----------|
 | [Clear](scripts/clear.rb) | &#10004;  |
 
+Ex: `bundle exec ruby scripts/clear.rb ~/Downloads/notas` (notas é um diretorio com as notas de corretagem)
 
 Exemplo de como executar um script de conversão de nota de corretagem:
 
