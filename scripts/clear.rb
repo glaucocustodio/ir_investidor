@@ -174,7 +174,15 @@ MAPA_PAPEIS = {
   'PORTO SEGURO'    => 'PSSA3',
   'GRAZZIOTIN'      => 'CGRA3',
   'ODONTOPREV'      => 'ODPV3',
-  'M.DIASBRANCO'    => 'MDIA3'
+  'M.DIASBRANCO'    => 'MDIA3',
+  'MINERVA'         => 'BEEF3',
+  'CCR SA'          => 'CCRO3',
+  'ALIANSCSONAE'    => 'ALSO3',
+  'MULTIPLAN'       => 'MULT3',
+  'GRUPO MATEUS'    => 'GMAT3',
+  'VAMOS'           => 'VAMO3',
+  'DIMED'           => 'PNVL3',
+  'COSAN'           => 'CSAN3',
 }
 
 package = Axlsx::Package.new
