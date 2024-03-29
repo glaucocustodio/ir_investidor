@@ -3,6 +3,7 @@
 require 'nokogiri'
 require 'axlsx'
 require 'csv'
+require 'pry-byebug'
 
 PDF_DIR = ARGV[0]
 
@@ -25,13 +26,14 @@ TIPO_NUMERO = {
   'ON'  => 3,
   'PN'  => 4,
   'UNT' => 11,
+  # 'PNA' => 5,
+  'PNB' => 6,
 }
-
 $operacoes = {}
 
 def read_pdf_path(path)
   cmd = "pdftohtml -stdout -xml -i \"#{path}\" 2>&1"
-  puts "Running command: #{cmd}"
+  # puts "Running command: #{cmd}"
   xml = `#{cmd}`
   Nokogiri::XML(xml).css('page').map do |page|
     h = page.attr('height').to_f
@@ -105,8 +107,9 @@ def process_pdf_path(path)
           papel = empresa.split(/\s{2}\s+/)[1]
         else
           empresa, tipo = empresa.split(/\s{2}\s+/, 2)
+
           empresa = empresa.to_s.upcase.gsub(/\A\s*[0-9]{2}\/[0-9]{2}\s*/, '')
-          if papel = NOME_PAPEL[empresa]
+          if papel = NOME_PAPEL.fetch(empresa)
             papel += TIPO_NUMERO[tipo.split(/\s/).first.to_s.upcase].to_s
           else
             papel = empresa
@@ -196,26 +199,45 @@ $operacoes.keys.sort.each do |data_operacao|
   end
 end
 
-package = Axlsx::Package.new
-workbook = package.workbook
-sheet = workbook.add_worksheet(:name => "Operações")
+# package = Axlsx::Package.new
+# workbook = package.workbook
+# sheet = workbook.add_worksheet(:name => "Operações")
 
-sheet.add_row([
-  'DATA OPERACAO',
-  'DATA LIQUIDACAO',
-  'ATIVO',
-  'OPERACAO',
-  'DAYTRADE?',
-  'PAPEL',
-  'QTD',
-  'PRECO',
-])
+# sheet.add_row([
+#   'DATA OPERACAO',
+#   'DATA LIQUIDACAO',
+#   'ATIVO',
+#   'OPERACAO',
+#   'DAYTRADE?',
+#   'PAPEL',
+#   'QTD',
+#   'PRECO',
+# ])
 
-rows.each { |row| sheet.add_row(row) }
+# rows.each { |row| sheet.add_row(row) }
 
-sheet_path = "#{PDF_DIR}/_operacoes-#{Time.now.to_i}.xlsx"
-package.serialize(sheet_path)
+# sheet_path = "#{PDF_DIR}/_operacoes-#{Time.now.to_i}.xlsx"
+# package.serialize(sheet_path)
 
-puts
-puts "A planilha de operações foi gerada e salva em:"
-puts sheet_path
+# puts
+# puts "A planilha de operações foi gerada e salva em:"
+# puts sheet_path
+
+csv_file_path = "#{PDF_DIR}/_operacoes-#{Date.today}.csv"
+
+CSV.open(csv_file_path, 'w') do |csv|
+  csv << [
+    'DATA OPERACAO',
+    'DATA LIQUIDACAO',
+    'ATIVO',
+    'OPERACAO',
+    'DAYTRADE?',
+    'PAPEL',
+    'QTD',
+    'PRECO',
+  ]
+
+  rows.each { |row| csv << row }
+end
+
+puts "CSV file generated at: #{csv_file_path}"

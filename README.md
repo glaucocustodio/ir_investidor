@@ -1,5 +1,15 @@
 # IR Investidor
 
+## Como rodar minha versão
+
+Onde `notas` é o diretórios com as notas de corretagem da Clear a serem lidas:
+
+```bash
+bundle exec ruby scripts/clear.rb notas
+```
+
+## Como rodar original
+
 IR Investidor é uma aplicação open source que pode rodar no seu computador para
 calcular imposto de renda em operações de renda variável.
 

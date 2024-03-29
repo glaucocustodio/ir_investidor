@@ -12,7 +12,10 @@
 
 ActiveRecord::Schema.define(version: 2020_05_09_104732) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 2020_05_09_104732) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -33,13 +36,13 @@ ActiveRecord::Schema.define(version: 2020_05_09_104732) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "assets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "assets", force: :cascade do |t|
     t.bigint "session_id"
     t.string "asset_class"
     t.string "name"
     t.integer "quantity"
-    t.decimal "price", precision: 10, scale: 2, unsigned: true
-    t.decimal "current_price", precision: 10, scale: 2, unsigned: true
+    t.decimal "price", precision: 10, scale: 2
+    t.decimal "current_price", precision: 10, scale: 2
     t.decimal "value", precision: 10, scale: 2
     t.decimal "current_value", precision: 10, scale: 2
     t.decimal "profit", precision: 10, scale: 2
@@ -49,7 +52,7 @@ ActiveRecord::Schema.define(version: 2020_05_09_104732) do
     t.index ["session_id", "asset_class", "name"], name: "index_assets_on_session_id_and_asset_class_and_name"
   end
 
-  create_table "assets_end_of_years", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "assets_end_of_years", force: :cascade do |t|
     t.bigint "session_id"
     t.integer "year", limit: 2
     t.json "assets"
@@ -58,32 +61,32 @@ ActiveRecord::Schema.define(version: 2020_05_09_104732) do
     t.index ["session_id", "year"], name: "index_assets_end_of_years_on_session_id_and_year"
   end
 
-  create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "orders", force: :cascade do |t|
     t.bigint "session_id"
-    t.integer "row", unsigned: true
+    t.integer "row"
     t.string "asset_class"
     t.string "order_type"
     t.boolean "daytrade"
     t.string "name"
-    t.integer "quantity", unsigned: true
-    t.decimal "price", precision: 10, scale: 2, unsigned: true
-    t.decimal "costs", precision: 10, scale: 2, unsigned: true
-    t.decimal "irrf", precision: 10, scale: 2, unsigned: true
+    t.integer "quantity"
+    t.decimal "price", precision: 10, scale: 2
+    t.decimal "costs", precision: 10, scale: 2
+    t.decimal "irrf", precision: 10, scale: 2
     t.date "ordered_at"
     t.date "settlement_at"
     t.string "new_name"
-    t.decimal "old_quantity", precision: 10, scale: 2, unsigned: true
-    t.decimal "new_quantity", precision: 10, scale: 2, unsigned: true
-    t.decimal "accumulated_common", precision: 10, scale: 2, unsigned: true
-    t.decimal "accumulated_daytrade", precision: 10, scale: 2, unsigned: true
-    t.decimal "accumulated_fii", precision: 10, scale: 2, unsigned: true
-    t.decimal "accumulated_irrf", precision: 10, scale: 2, unsigned: true
+    t.decimal "old_quantity", precision: 10, scale: 2
+    t.decimal "new_quantity", precision: 10, scale: 2
+    t.decimal "accumulated_common", precision: 10, scale: 2
+    t.decimal "accumulated_daytrade", precision: 10, scale: 2
+    t.decimal "accumulated_fii", precision: 10, scale: 2
+    t.decimal "accumulated_irrf", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["session_id", "ordered_at"], name: "index_orders_on_session_id_and_ordered_at"
   end
 
-  create_table "session_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "session_logs", force: :cascade do |t|
     t.bigint "session_id"
     t.text "message"
     t.datetime "created_at", null: false
@@ -91,91 +94,91 @@ ActiveRecord::Schema.define(version: 2020_05_09_104732) do
     t.index ["session_id"], name: "index_session_logs_on_session_id"
   end
 
-  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sessions", force: :cascade do |t|
     t.string "secret", limit: 64
     t.boolean "sheet_ready"
     t.boolean "orders_ready"
     t.boolean "calcs_ready"
-    t.integer "orders_count", unsigned: true
+    t.integer "orders_count"
     t.decimal "assets_value", precision: 10, scale: 2
     t.string "error"
-    t.timestamp "expire_at"
+    t.datetime "expire_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["secret"], name: "index_sessions_on_secret", unique: true
   end
 
-  create_table "tax_entries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "tax_entries", force: :cascade do |t|
     t.bigint "tax_id"
     t.string "asset_class"
     t.string "name"
     t.boolean "daytrade"
-    t.decimal "tax_aliquot", precision: 10, scale: 6, unsigned: true
-    t.decimal "irrf_aliquot", precision: 10, scale: 6, unsigned: true
+    t.decimal "tax_aliquot", precision: 10, scale: 6
+    t.decimal "irrf_aliquot", precision: 10, scale: 6
     t.decimal "earnings", precision: 10, scale: 2
-    t.decimal "tax_due", precision: 10, scale: 2, unsigned: true
-    t.decimal "irrf", precision: 10, scale: 2, unsigned: true
+    t.decimal "tax_due", precision: 10, scale: 2
+    t.decimal "irrf", precision: 10, scale: 2
     t.datetime "disposed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tax_id", "asset_class", "disposed_at"], name: "index_tax_entries_on_tax_id_and_asset_class_and_disposed_at"
   end
 
-  create_table "taxes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "taxes", force: :cascade do |t|
     t.bigint "session_id"
     t.date "period"
-    t.decimal "darf", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_daytrade_darf", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_darf", precision: 10, scale: 2, unsigned: true
-    t.decimal "stocks_sales", precision: 10, scale: 2, unsigned: true
-    t.decimal "stocks_taxfree_profits", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_tax_aliquot", precision: 10, scale: 6, unsigned: true
-    t.decimal "common_irrf_aliquot", precision: 10, scale: 6, unsigned: true
+    t.decimal "darf", precision: 10, scale: 2
+    t.decimal "stocks_sales", precision: 10, scale: 2
+    t.decimal "stocks_taxfree_profits", precision: 10, scale: 2
+    t.decimal "common_tax_aliquot", precision: 10, scale: 6
+    t.decimal "common_irrf_aliquot", precision: 10, scale: 6
     t.decimal "common_stocks_earnings", precision: 10, scale: 2
     t.decimal "common_options_earnings", precision: 10, scale: 2
     t.decimal "common_subscriptions_earnings", precision: 10, scale: 2
     t.decimal "common_earnings", precision: 10, scale: 2
-    t.decimal "common_sales", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_losses_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_taxable_value", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_losses_after", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_tax_due", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_irrf", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_irrf_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "common_irrf_after", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_tax_aliquot", precision: 10, scale: 6, unsigned: true
-    t.decimal "daytrade_irrf_aliquot", precision: 10, scale: 6, unsigned: true
+    t.decimal "common_sales", precision: 10, scale: 2
+    t.decimal "common_losses_before", precision: 10, scale: 2
+    t.decimal "common_taxable_value", precision: 10, scale: 2
+    t.decimal "common_losses_after", precision: 10, scale: 2
+    t.decimal "common_tax_due", precision: 10, scale: 2
+    t.decimal "common_irrf", precision: 10, scale: 2
+    t.decimal "daytrade_tax_aliquot", precision: 10, scale: 6
+    t.decimal "daytrade_irrf_aliquot", precision: 10, scale: 6
     t.decimal "daytrade_stocks_earnings", precision: 10, scale: 2
     t.decimal "daytrade_options_earnings", precision: 10, scale: 2
     t.decimal "daytrade_earnings", precision: 10, scale: 2
-    t.decimal "daytrade_sales", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_losses_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_taxable_value", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_losses_after", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_tax_due", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_irrf", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_irrf_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "daytrade_irrf_after", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_tax_aliquot", precision: 10, scale: 6, unsigned: true
+    t.decimal "daytrade_sales", precision: 10, scale: 2
+    t.decimal "daytrade_losses_before", precision: 10, scale: 2
+    t.decimal "daytrade_taxable_value", precision: 10, scale: 2
+    t.decimal "daytrade_losses_after", precision: 10, scale: 2
+    t.decimal "daytrade_tax_due", precision: 10, scale: 2
+    t.decimal "daytrade_irrf", precision: 10, scale: 2
+    t.decimal "fii_tax_aliquot", precision: 10, scale: 6
     t.decimal "fii_earnings", precision: 10, scale: 2
-    t.decimal "fii_sales", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_losses_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_taxable_value", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_losses_after", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_tax_due", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_irrf", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_irrf_before", precision: 10, scale: 2, unsigned: true
-    t.decimal "fii_irrf_after", precision: 10, scale: 2, unsigned: true
+    t.decimal "fii_sales", precision: 10, scale: 2
+    t.decimal "fii_losses_before", precision: 10, scale: 2
+    t.decimal "fii_taxable_value", precision: 10, scale: 2
+    t.decimal "fii_losses_after", precision: 10, scale: 2
+    t.decimal "fii_tax_due", precision: 10, scale: 2
+    t.decimal "fii_irrf", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "common_irrf_before", precision: 10, scale: 2
+    t.decimal "common_irrf_after", precision: 10, scale: 2
+    t.decimal "daytrade_irrf_before", precision: 10, scale: 2
+    t.decimal "daytrade_irrf_after", precision: 10, scale: 2
+    t.decimal "fii_irrf_before", precision: 10, scale: 2
+    t.decimal "fii_irrf_after", precision: 10, scale: 2
+    t.decimal "common_daytrade_darf", precision: 10, scale: 2
+    t.decimal "fii_darf", precision: 10, scale: 2
     t.index ["session_id", "period"], name: "index_taxes_on_session_id_and_period"
   end
 
-  create_table "tickers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "tickers", force: :cascade do |t|
     t.string "ticker", limit: 20
     t.string "cnpj", limit: 15
-    t.text "razao_social", limit: 255
-    t.text "trading_name", limit: 255
+    t.text "razao_social"
+    t.text "trading_name"
     t.text "fake_fulltext_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
